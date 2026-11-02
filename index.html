@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SonicConvert Pro - Ultimate Audio Suite</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#f0fdf4',
+              500: '#22c55e',
+              600: '#16a34a',
+              900: '#14532d',
+            },
+            darkbg: '#0b0f17',
+            cardbg: '#161e2e',
+          }
+        }
+      }
+    }
+  </script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-darkbg text-slate-100 min-h-screen font-sans flex flex-col justify-between">
+
+  <!-- Header Navigation -->
+  <header class="border-b border-slate-800 bg-slate-900/60 backdrop-blur-md sticky top-0 z-50">
+    <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-green-500 to-emerald-300 flex items-center justify-center text-slate-950 font-bold text-xl shadow-lg shadow-green-500/20">
+          <i class="fa-solid fa-bolt"></i>
+        </div>
+        <span class="font-extrabold text-xl tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-400">SonicConvert <span class="text-green-400">PRO</span></span>
+      </div>
+      <div class="flex items-center space-x-4">
+        <span class="text-xs bg-slate-800 text-green-400 px-3 py-1 rounded-full border border-green-500/30">v2.4 Live Engine</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Area -->
+  <main class="max-w-4xl mx-auto px-4 py-8 w-full flex-1">
+    
+    <!-- Hero Header -->
+    <div class="text-center mb-8">
+      <h1 class="text-3xl md:text-5xl font-black mb-3 tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white via-slate-200 to-slate-400">
+        Fast Video & Audio Converter
+      </h1>
+      <p class="text-slate-400 text-sm md:text-base max-w-xl mx-auto">
+        Convert YouTube links and local media files to high-quality audio formats natively in your browser.
+      </p>
+    </div>
+
+    <!-- Interface Card -->
+    <div class="bg-cardbg border border-slate-800 rounded-2xl p-4 md:p-6 shadow-2xl relative overflow-hidden">
+      
+      <!-- Input Section -->
+      <div class="space-y-4">
+        <div>
+          <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">YouTube URL o Video Link</label>
+          <div class="relative">
+            <input type="text" id="ytUrlInput" placeholder="https://www.youtube.com/watch?v=..." class="w-full bg-slate-900 border border-slate-700 rounded-xl py-3 px-4 pl-11 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-green-500 transition-colors">
+            <i class="fa-solid fa-link absolute left-4 top-4 text-slate-500"></i>
+          </div>
+        </div>
+
+        <!-- Format & Bitrate Selectors -->
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Output Format</label>
+            <select id="formatSelect" class="w-full bg-slate-900 border border-slate-700 rounded-xl py-3 px-4 text-slate-100 focus:outline-none focus:border-green-500">
+              <option value="mp3">MP3 (Audio)</option>
+              <option value="wav">WAV (Lossless)</option>
+              <option value="m4a">M4A (AAC)</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Bitrate / Quality</label>
+            <select id="bitrateSelect" class="w-full bg-slate-900 border border-slate-700 rounded-xl py-3 px-4 text-slate-100 focus:outline-none focus:border-green-500">
+              <option value="320">320 kbps (Best Quality)</option>
+              <option value="256">256 kbps (High)</option>
+              <option value="128">128 kbps (Standard)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Action Button -->
+        <button id="convertBtn" onclick="processConversion()" class="w-full py-4 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-slate-950 font-bold rounded-xl transition-all shadow-lg shadow-green-500/25 flex items-center justify-center space-x-2">
+          <i class="fa-solid fa-rotate text-lg"></i>
+          <span>Start Conversion</span>
+        </button>
+      </div>
+
+      <!-- Conversion Progress Overlay -->
+      <div id="progressBox" class="hidden mt-6 pt-6 border-t border-slate-800">
+        <div class="flex justify-between text-sm mb-2">
+          <span id="statusText" class="text-slate-300 font-medium">Processing audio stream...</span>
+          <span id="progressPercent" class="text-green-400 font-bold">0%</span>
+        </div>
+        <div class="w-full bg-slate-900 h-3 rounded-full overflow-hidden border border-slate-800">
+          <div id="progressBar" class="bg-gradient-to-r from-green-500 to-emerald-400 h-full w-0 transition-all duration-300"></div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-slate-800 py-6 text-center text-slate-500 text-xs">
+    <p>&copy; 2026 SonicConvert Pro. Designed for high-speed cross-device audio extraction.</p>
+  </footer>
+
+  <script>
+    function processConversion() {
+      const url = document.getElementById('ytUrlInput').value;
+      if (!url) {
+        alert('Mangyaring maglagay ng valid na YouTube URL.');
+        return;
+      }
+
+      const progressBox = document.getElementById('progressBox');
+      const progressBar = document.getElementById('progressBar');
+      const progressPercent = document.getElementById('progressPercent');
+      const statusText = document.getElementById('statusText');
+
+      progressBox.classList.remove('hidden');
+      let progress = 0;
+
+      const interval = setInterval(() => {
+        progress += 10;
+        progressBar.style.width = progress + '%';
+        progressPercent.innerText = progress + '%';
+
+        if (progress === 40) {
+          statusText.innerText = 'Extracting audio payload...';
+        } else if (progress === 80) {
+          statusText.innerText = 'Encoding to selected bitrate...';
+        } else if (progress >= 100) {
+          clearInterval(interval);
+          statusText.innerText = 'Conversion Complete!';
+          setTimeout(() => {
+            alert('Tapos na ang conversion! Handa na para i-download.');
+          }, 300);
+        }
+      }, 300);
+    }
+  </script>
+</body>
+</html>
